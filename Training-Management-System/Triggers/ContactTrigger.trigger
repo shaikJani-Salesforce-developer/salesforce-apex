@@ -116,7 +116,7 @@ If the related Account’s Industry = “Finance”, set Contact.Title = “Fina
         for(Contact contact : Trigger.new){
             if(contact.AccountId != null){
                 accids.add(contact.AccountId);
-            }
+             }
         }
         //query parent records 
         map<id,Account> accsToUpdate = new map<id,Account>([select id,name,Rating from Account where id = :accids]);
