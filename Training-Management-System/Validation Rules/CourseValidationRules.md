@@ -1,6 +1,6 @@
 # Course Object Validation Rules
 
-## About Course New Fee Rule
+## Course new fee is not blank and should not be less than zero and should not be greater than 50k
 - Active: true
 - Formula: AND(NOT(ISBLANK(New_Fee__c)), OR(New_Fee__c <= 0, New_Fee__c >= 50000))
 - Error Message: Check New Fees
