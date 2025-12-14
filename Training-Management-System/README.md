@@ -1,4 +1,5 @@
 📘 Training Management System
+
 📄 Description
 
 A Salesforce Apex project that demonstrates real-world business logic, DML operations, trigger framework, and asynchronous Apex concepts using a training-based use case.
@@ -6,17 +7,13 @@ A Salesforce Apex project that demonstrates real-world business logic, DML opera
 This project is designed to showcase core Apex skills and best practices expected from a Salesforce Developer.
 
 🔑 Concepts Covered
-
 Business Classes
-
 DML Operations
-
 Insert
-
 Update
-
 Delete
-
+Upsert
+Undelete
 Triggers & Trigger Handler Pattern
 
 Asynchronous Apex
