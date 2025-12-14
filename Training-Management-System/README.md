@@ -44,12 +44,12 @@ This project is designed to showcase core Apex development skills, Salesforce be
 - Dedicated Test Classes
   
 ### Triggers
-- Account Trigger
-- Contact Trigger
-- Opportunity Trigger
-- Case Trigger
-- Course Trigger
-- Lead Trigger
+ - Account Trigger
+ - Contact Trigger
+ - Opportunity Trigger
+ - Case Trigger
+ - Course Trigger
+ - Lead Trigger
 - Dedicated Respective Test Classes
 
 ### Why This Project Stands Out
