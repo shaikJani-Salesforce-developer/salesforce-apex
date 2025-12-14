@@ -23,6 +23,7 @@ This project is designed to showcase core Apex development skills, Salesforce be
 - Revenue-based and status-based updates
 - Parent-child data processing using Apex
 - Automated cleanup and batch processing
+- Validation Rules for Data consistency
 
 ### Code Quality and Best Practices
 - Bulk-safe logic (no SOQL or DML inside loops)
@@ -51,6 +52,17 @@ This project is designed to showcase core Apex development skills, Salesforce be
  - Course Trigger
  - Lead Trigger
 - Dedicated Respective Test Classes
+
+### Validation Rules for
+- Student Object
+- Course Object
+- Trainer Object
+- Project Object
+- Doctor Object
+- Patient Object
+- Campaign Object
+- Lead Object
+- Opportunity Object
 
 ### Why This Project Stands Out
 - Demonstrates real Salesforce Apex skills
