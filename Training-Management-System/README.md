@@ -1,140 +1,65 @@
-📘 Training Management System
-
-📄 Description
-
-A Salesforce Apex project that demonstrates real-world business logic, DML operations, trigger framework, and asynchronous Apex concepts using a training-based use case.
-
-This project is designed to showcase core Apex skills and best practices expected from a Salesforce Developer.
-
-🔑 Concepts Covered
-Business Classes
-DML Operations
-Insert
-Update
-Delete
-Upsert
-Undelete
-Triggers & Trigger Handler Pattern
-
-Asynchronous Apex
-
-Future Methods
-
-Queueable Apex
-
-Batch Apex
-
-Scheduled Apex
-
-Bulkification & Governor Limits
-
-Test Classes with 99% Code Coverage
-
-🧩 Business Classes
-
-Car.cls
-
-Mobile.cls
-
-Rectangle.cls
-
-Employee.cls
-
-Student.cls
-
-Course.cls
-
-BankAccount.cls
-
-Pen.cls
-
-⚙️ DML Operation Classes
-
-InsertWays.cls
-
-InsertOperation.cls
-
-RelatedOperation.cls
-
-Bulkification.cls
-
-⏱ Asynchronous Apex
-Future Methods
-
-FutureMethodsClass.cls
-
-Queueable Apex
-
-QueueOne.cls
-
-QueueTwo.cls
-
-QueueThree.cls
-
-QueueAccounts.cls
-
-QueueLeads.cls
-
-QueueOpportunities.cls
-
-QueueOpps.cls
-
-Scheduled Apex
-
-ScheduleApex.cls
-
-ScheduleLeads.cls
-
-ScheduleOpps.cls
-
-Batch Apex
-
-BatchAccounts.cls
-
-BatchBooks.cls
-
-BatchOppsTotalAmount.cls
-
-🧪 Test Classes
-
-Separate test classes for:
-
-Business logic
-
-Triggers
-
-DML operations
-
-Asynchronous Apex
-
-99% overall code coverage
-
-Bulk-safe and assertion-based testing
-
-✅ Highlights
-
-Follows Salesforce best practices
-
-Bulkified logic
-
-Clean trigger framework
-
-Real-time business use cases
-
-GitHub-ready professional structure
-
-✅ Verdict
-
-This README is GOOD
-
-Recruiter will understand your work in 30 seconds
-
-Matches real Salesforce project standards
-
-If you want next:
-
-🔹 Validation Rules → how to show in GitHub
-
-🔹 Improve root README (skills + keywords for ATS)
-
-🔹 How to explain this project in interviews
+## 🚀 Training Management System – Salesforce Apex Project
+
+### Project Overview
+A Salesforce Apex project demonstrating real-world business logic, bulkified DML operations, trigger framework implementation, and asynchronous Apex concepts using a training-based use case.
+This project is designed to showcase core Apex development skills, Salesforce best practices, and production-ready coding standards expected from a Salesforce Developer.
+
+
+### Apex Concepts Covered
+- Apex Classes with reusable business logic
+- Bulkified DML operations (Insert, Update, Delete,Upsert,Undelete)
+- Triggers and Trigger Handler pattern
+- SOQL and Relationship Queries
+- Database Methods and Exception Handling
+
+### Asynchronous Apex
+- Future Methods (Mixed DML handling)
+- Queueable Apex (background jobs and chaining)
+- Batch Apex (large data processing with error handling)
+- Scheduled Apex (time-based automation)
+
+### Business Scenarios Implemented
+- Account, Contact, Lead, Case, and Opportunity automation
+- Revenue-based and status-based updates
+- Parent-child data processing using Apex
+- Automated cleanup and batch processing
+
+### Code Quality and Best Practices
+- Bulk-safe logic (no SOQL or DML inside loops)
+- Proper error handling using Database.SaveResult
+- 99% Apex Overall code coverage
+- Production-style, interview-ready code
+
+### Key Components
+- Business Classes
+  - Car.cls
+  - Mobile.cls
+  - Rectangle.cls
+  - BankAccount.cls
+  - Employee.cls
+  - Vehicle.cls
+  - Pen.cls
+  - Student.cls
+  - Course.cls
+- Dedicated Test Classes
+  
+### Triggers
+- Account Trigger
+- Contact Trigger
+- Opportunity Trigger
+- Case Trigger
+- Course Trigger
+- Lead Trigger
+- Dedicated Respective Test Classes
+
+### Why This Project Stands Out
+- Demonstrates real Salesforce Apex skills
+- Covers synchronous and asynchronous processing
+- Clean GitHub structure for recruiter review
+
+### Developer Skills Demonstrated
+- Apex Programming
+- SOQL and DML Operations
+- Asynchronous Apex
+- Salesforce Best Practices
+- 99% Code Coverage
