@@ -1,0 +1,6 @@
+### Student Object Validation Rules
+
+**Rule Name:** Age  
+**Active:** Checked  
+**Error Condition Formula:** Age_in_Years__c <= 20  
+**Error Message:** Age Must be Above 20
