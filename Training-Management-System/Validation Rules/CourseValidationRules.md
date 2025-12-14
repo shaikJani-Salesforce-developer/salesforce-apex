@@ -12,12 +12,12 @@
 - Error Message: Availability Online Only
   
 
-  ## Course Name Changed Rule
+## Course Name Changed Rule
 - Active: true
 - Formula: ISCHANGED(Name)
 - Error Message: You Cannot change the Course name
 
-  ## New Fee Must Be Greater Than Old Fee Rule
+## New Fee Must Be Greater Than Old Fee Rule
 - Active: true
 - Formula: New_Fee__c < Old_Fee__c
 - Error Message: New fee must be greater than old fee
