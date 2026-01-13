@@ -1,4 +1,27 @@
-trigger LeadTrigger on Lead (before insert,before update) {
+trigger LeadTrigger on Lead (before insert,before update,After insert,after update) {
+
+/*When a Lead is converted to Account/Contact
+If the Lead’s Industry = ‘Technology’, automatically create a related Opportunity with:
+Stage = “Prospecting”
+Amount = Lead’s Annual Revenue
+Otherwise, do not create any Opportunity*/
+    
+    if(Trigger.isAfter && Trigger.isUpdate){
+        list<Opportunity> opps = new list<Opportunity>();
+        for(Lead lead :Trigger.new){
+         Lead oldLead  = Trigger.oldMap.get(lead.id);
+            if(!oldLead.isConverted && lead.Industry == 'Technology' && lead.IsConverted){
+                Opportunity opp = new Opportunity();
+                opp.Name = lead.Name + ' Test Deal';
+                opp.StageName = 'Prospecting';
+                opp.Amount = lead.AnnualRevenue;
+                opp.CloseDate = Date.today().addDays(30);
+                opp.AccountId = lead.ConvertedAccountId;
+                opps.add(opp);
+            }
+        }
+        insert opps;
+    }
 
    //Update the lead rating to Medium if the lead industry is Banking otherwise the rating should be warm
 
