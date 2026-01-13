@@ -1,5 +1,42 @@
-trigger CaseTrigger on Case (before insert,before update) {
-    
+trigger CaseTrigger on Case (before insert,before update,before delete,After insert,after update,after delete,after undelete) {
+//Prevent Case deletion if it is associated with a Contact
+    if(Trigger.isBefore && Trigger.isDelete){
+        for(Case caseOld :Trigger.old){
+            if(caseOld.contactid != null){
+ caseOld.addError('cannot delete case because it is associated with a Contact');
+            }
+        }
+    }
+    /*If any Case under an Account is High Priority,
+set Account.Has_High_Priority_Case__c = true
+If no high priority cases exist → false*/
+    if(Trigger.isAfter && Trigger.isInsert){
+        set<id> accountids = new set<id>();
+        for(Case c : Trigger.new){
+            if(c.accountid !=null){
+                accountIds.add(c.accountid);
+            }
+        }
+        //load priority high cases in set
+        set<id> highPriorityCases = new set<id>();
+        for(Case c :Trigger.new){
+            if(c.accountid !=null && c.Priority=='High'){
+                highPriorityCases.add(c.accountId);
+            }
+        }
+Map<id,Account> accsMap = new Map<id,Account>([select id,name,Has_High_Priority_Case__c
+                                               from Account where id IN:accountIds]);
+        for(Account account : accsMap.values()){
+            if(highPriorityCases.contains(account.id)){
+                account.Has_High_Priority_Case__c = true;
+            }
+            else{
+                account.Has_High_Priority_Case__c = false;
+            }
+        }
+        update accsMap.values();
+    }  
+
     //If a Case has been in "Working" status for more than 3 days, automatically update status to "Escalated".
     if(Trigger.isbefore && Trigger.isUpdate){
        
