@@ -1,4 +1,164 @@
 trigger CaseTrigger on Case (before insert,before update,before delete,After insert,after update,after delete,after undelete) {
+
+/*Whenever a Case is created, updated or closed
+✅ Look at ALL related Cases under the Account
+✅ If any Case is Closed with High Priority in last 30 days
+→ Customer_Health__c = "Healthy"
+
+✅ Else if any Open Case exists
+→ Customer_Health__c = "At Risk"
+
+✅ Else
+→ Customer_Health__c = "Inactive"*/
+    if(trigger.isAfter && Trigger.isInsert || Trigger.isUpdate){
+        set<id> accountIds = new set<id>();
+        for(Case c :Trigger.new){
+            if(c.accountid !=null){
+                accountIds.add(c.accountid);
+            }
+        }
+        set<id> closedAndHighCases = new set<id>();
+        for(Case c :[select id,accountid,Priority,Status,ClosedDate from case 
+                     where accountid IN:accountIds and ClosedDate = Last_N_Days:30 ]){
+                         
+             if(c.Priority == 'High' && c.Status__c == 'Closed'){
+                closedAndHighCases.add(c.AccountId);
+            }   
+        }
+        set<id> openCases = new set<id>();
+        for(Case c :[select id,accountid,Priority,Status,ClosedDate from case 
+                     where accountid IN:accountIds and ClosedDate = Last_N_Days:30]){
+                         
+            if(c.Status != 'Closed' && c.Priority == 'High' ){
+                openCases.add(c.AccountId);
+            }
+        }
+        Map<id,Account> accsMap = new Map<id,account>([select id,name,Customer_Health__c from Account
+                                                        where id IN: accountIds]);
+        for(Account account :accsMap.values()){
+            if(closedAndHighCases.contains(account.id)){
+                account.Customer_Health__c = 'Healthy';
+            }
+            else if(openCases.contains(account.id)){
+                account.Customer_Health__c = 'At Risk';
+            }
+            else{
+                account.Customer_health__c = 'Inactive';
+            }
+        }
+        update accsMap.values();
+    }
+    /*A Case cannot be created for an Account unless:
+
+1️⃣ The Account has at least ONE Active Contact
+2️⃣ Active Contact means:
+
+Contact.Status__c = 'Active'
+
+Contact.Email != null*/
+    if(Trigger.isBefore && Trigger.isInsert){
+        set<id> accountIds = new set<id>();
+        for(Case c :Trigger.new){
+            if(c.accountid !=null){
+                accountIds.add(c.AccountId);
+                
+            }
+        }
+          Map<id,Integer> activeContacts = new Map<id,Integer>();
+        for(AggregateResult ar :[select accountid,count(id) cnt from Contact where accountid IN: accountIds
+                                       And Status__c ='Active' And Email != Null Group By Accountid]){ 
+                     
+               activeContacts.put((id) ar.get('accountid'), (Integer) ar.get('cnt'));    
+                                           
+      }
+        for(Case c :Trigger.new){
+            if(c.accountid != null && !activeContacts.containsKey(c.AccountId)){
+                c.addError('Cannot create Case. Account must have at least one Active Contact with Email');
+            }
+        }
+    }
+    /*When a Case is escalated (IsEscalated = true):
+
+1️⃣ The Account Escalation_Level__c must be updated automatically
+2️⃣ Logic:
+
+If Account.Type = Customer → Escalation_Level__c = High
+
+Else → Escalation_Level__c = Medium*/
+    
+    if(Trigger.isAfter && Trigger.isUpdate){
+        set<id> accountIds = new set<id>();
+        for(Case c :Trigger.new){
+            
+         Case  oldCase  = Trigger.oldMap.get(c.id);
+            if(oldCase.IsEscalated == false && c.IsEscalated ==true && c.AccountId !=null ){
+                accountIds.add(c.AccountId);
+            }
+        }
+        list<Account> accsToUpdate = new list<Account>();
+        for(Account account :[select id,type,Escalation_Level__c from Account where id IN:accountIds]){
+            if(account.type == 'Customer'){
+                account.Escalation_Level__c = 'High';
+            }
+            else{
+                account.Escalation_Level__c = 'Medium';
+            }
+            accsToUpdate.add(account);
+        }
+        update accsToUpdate;
+    }
+    /*Whenever a Case is created or updated:
+
+✅ Look at ALL related Opportunities under the same Account
+✅ If any Open Opportunity > ₹5,00,000
+AND any High Priority Case is Open
+→ Set Account.Revenue_At_Risk__c = true
+
+✅ Else
+→ Set Account.Revenue_At_Risk__c = false*/
+    
+    if(Trigger.isAfter && (Trigger.isInsert || Trigger.isUpdate)){
+        set<id> accountIds = new set<id>();
+        for(Case c :Trigger.new){
+            if(c.AccountId != null){
+                accountIds.add(c.AccountId);
+            }
+        }
+        set<id> riskyOppAccs = new set<id>();
+      for(Opportunity opp :[select accountid,Amount,Stagename from Opportunity
+                                 where accountid IN:accountids And 
+                                 StageName NOT IN('Closed Won', 'Closed Lost') 
+                                 And Amount >500000]){
+                                            
+               riskyOppAccs.add(opp.accountid);
+            }
+        
+          set<id> highPriorityCases = new set<id>();
+        for(case c :[select accountid,status__c,priority from case 
+                       where accountid IN: accountIds]){
+                           
+            if(c.Priority == 'High' && c.Status__c != 'Closed'){
+                highPriorityCases.add(c.AccountId);
+            }
+        }
+        
+          list<Account> accountsToUpdate = new list<Account>();
+        for(Account account :[select id,name,Revenue_At_Risk__c from Account
+                                  where id IN:accountIds]){
+                                      
+            if(riskyOppAccs.contains(account.id) && 
+                   highPriorityCases.contains(account.id)){
+                       
+                account.Revenue_At_Risk__c = true;
+            }
+            else{
+                account.Revenue_At_Risk__c = false;
+            }
+            accountsToUpdate.add(account);
+        }
+        update accountsToUpdate;
+    }
+}
 //Prevent Case deletion if it is associated with a Contact
     if(Trigger.isBefore && Trigger.isDelete){
         for(Case caseOld :Trigger.old){
