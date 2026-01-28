@@ -1,4 +1,4 @@
-trigger ContactTrigger on Contact (before insert,before update,after delete,After Insert,After Update,After Delete,After Undelete) {
+trigger ContactTrigger on Contact (before insert,after insert,after update,after delete,before delete,After undelete,before update) {
 /*
 Whenever a Contact is INSERTED or UPDATED,
 check if the Contact has Email.
@@ -258,12 +258,11 @@ If no Contact satisfies this condition
             }
         }
         set<id> emailAndPhoneCons = new set<id>();
-for(Contact contact : [select id,Email,Phone,Accountid from Contact where accountId IN:accountIds]){
+  for(Contact contact : [select id,Email,Phone,Accountid from Contact where accountId IN:accountIds]){
             if(contact.Email != null && contact.Phone !=null){
                 emailAndPhoneCons.add(contact.AccountId);
             }
         }
-        //fetch accounts
   Map<id,Account> accsMap = new Map<id,Account>([select id,Name,Customer_Engaged__c from Account
                                                 where id IN:accountIds]);
         
@@ -277,8 +276,26 @@ for(Contact contact : [select id,Email,Phone,Accountid from Contact where accoun
         }
         update accsMap.values();
     }
-
-/*When a new Contact record is created,
+    //Rule : Two Contacts should not have the same Email.
+    if(Trigger.isbefore && (Trigger.isInsert || Trigger.isUpdate)){
+        set<String> emails = new set<String>();
+        for(Contact contact :Trigger.new){
+            if(contact.email !=null){
+                emails.add(contact.Email);
+            }
+        }
+         Map<String,id> existingEmailMap = new Map<String,id>();
+        for(Contact contact :[select id,email from contact where email IN: emails]){
+            existingEmailMap.put(contact.email, contact.Id);
+        }
+        for(Contact contact : Trigger.new){
+            if(contact.email !=null && existingEmailMap.containsKey(contact.Email) &&
+               contact.id != existingEmailMap.get(contact.email)){
+                   contact.addError('Duplicate Contact Email is not allowed.');
+               }
+        }
+    }
+   /*When a new Contact record is created,
 if the Lead Source field is blank,
 then automatically set Lead Source = ‘Web’.
 
@@ -294,7 +311,7 @@ then automatically set Description = ‘Created automatically via trigger’.*/
             } 
         } 
         
-    }
+    } 
     //whenever a related contact is deleted then delete the account record also
         //we cannot directly delete accountids in loop 
         //we can use set collection for avoiding duplicates
@@ -395,7 +412,7 @@ If the related Account’s Industry = “Finance”, set Contact.Title = “Fina
         for(Contact contact : Trigger.new){
             if(contact.AccountId != null){
                 accids.add(contact.AccountId);
-             }
+            }
         }
         //query parent records 
         map<id,Account> accsToUpdate = new map<id,Account>([select id,name,Rating from Account where id = :accids]);
@@ -405,4 +422,6 @@ If the related Account’s Industry = “Finance”, set Contact.Title = “Fina
             }
         update accsToUpdate.values();
         }
+    
     }
+}
