@@ -1,140 +1,47 @@
-trigger OppTrigger on Opportunity (before insert,before update,before delete,After insert,After update,after delete,After undelete) {
-/*An Account can have only ONE Opportunity
-with StageName = 'Negotiation/Review' at any time.*/
-    if(Trigger.isBefore && Trigger.isInsert){
-        set<id> accountIds = new set<id>();
-        for(Opportunity opportunity :trigger.new){
-            if(opportunity.accountid !=null){
-                accountIds.add(opportunity.accountid);
-            }
-        }
-         Map<id,Integer> oppsCount = new Map<id,Integer>();
-        for(aggregateResult ar :[select accountid,count(id) cnt from Opportunity where accountid In: accountIds 
-                                 And StageName = 'Negotiation/Review' Group by accountid]){
-                     oppsCount.put((id) ar.get('accountid'), (Integer) ar.get('cnt'));
-                                     
-        }
-        for(Opportunity opportunity :trigger.new){
-            if(oppsCount.containsKey(opportunity.AccountId) && oppsCount.get(opportunity.AccountId) >=1 &&
-               opportunity.StageName =='Negotiation/Review'){
-                   
-                opportunity.addError('Only one Opportunity in Negotiation/Review is allowed per Account');
-            }
-        }
-    }
-    /*Business Requirement:
-
-If an Account is marked as Frozen (Is_Frozen__c = true):
-
-❌ Users cannot create OR update Opportunities*/
-    if(Trigger.isBefore && (trigger.isInsert || trigger.isUpdate)){
-        set<id> accountIds = new set<id>();
-        for(Opportunity opportunity :Trigger.new){
-            if(opportunity.AccountId !=null){
-                accountIds.add(opportunity.AccountId);
-            }
-        }
-        Map<id,Account> accsMap = new Map<id,Account>([select id,name,Is_frozen__c from Account
-                                                        where id IN:accountIds]);
-        
-        
-        for(Opportunity opportunity :trigger.new){
-            if(accsMap.containskey(opportunity.AccountId) && accsMap.get(opportunity.AccountId).is_frozen__c == true){
-                opportunity.addError('This Account is frozen. You cannot create or update Opportunities.');
-            }
-        }
-    }  
-        /*Business Requirement:
-
-Account has a field Active_Revenue__c
-
-This field must always store:
-
-SUM of Amount of Opportunities where
-
-StageName = 'Closed Won'
-
-CloseDate is in the current financial year*/
-        
-     if(Trigger.isAfter && (Trigger.isInsert ||Trigger.isUpdate)){
-            set<id> accountIds = new set<id>();
-            for(Opportunity opportunity : trigger.new){
-                if(opportunity.AccountId !=null){
-                    accountIds.add(opportunity.AccountId);
-                }
-            }
-            Map<id,Decimal> closedWonTotalAmountOpps = new Map<id,Decimal>();
-            for(AggregateResult ar :[select accountid,Sum(amount) total from Opportunity where accountid IN:accountIds
-                                          And stagename = 'Closed Won' And CloseDate = THIS_YEAR Group by Accountid]){
-                                              
-          closedWonTotalAmountOpps.put((id) ar.get('accountid'), (Decimal) ar.get('total'));
-                                              
-        }
-         List<Account> accsList = new List<Account>([select id,name,Active_Revenue__c from Account
-                                                       where id IN:accountIds]);
-         
-         for(Account account :accsList){
-             if(closedWonTotalAmountOpps.containsKey(account.id)){
-                       account.active_revenue__c = closedWonTotalAmountOpps.get(Account.Id);
-             }
-             else{
-                 account.active_revenue__c = 0;
-             }
-         }
-         update accsList;
-    }   
-    /*An Opportunity CANNOT be created for an Account if the Account has any OPEN High-Priority Cases.
-
-Conditions:
-
-Case.Status ≠ Closed
-
-Case.Priority = High*/
-    if(Trigger.isbefore && Trigger.isInsert){
-        set<id> accountIds = new set<id>();
-        for(Opportunity opportunity :Trigger.new){
-            if(opportunity.accountid !=null){
-                accountIds.add(opportunity.AccountId);
-                
-            }
-        }
-         Map<id,Integer> highCases = new Map<id,Integer>();
-        for(AggregateResult ar :[select accountId,count(id) cnt from Case where accountId IN: accountIds
-                                 And Status != 'Closed' And Priority = 'High' Group By accountid]){
-                                     
-                  highCases.put((id) ar.get('accountid'), (integer) ar.get('cnt'));      
-                                     
-      }
-        for(Opportunity opportunity :Trigger.new){
-            if( opportunity.AccountId != null && highCases.containsKey(opportunity.AccountId)){
-                opportunity.addError('Cannot create Opportunity while High Priority open Cases exist for this Account.');
-            }
-        }
-    }
-}
-
-
-/*Whenever a new Opportunity is inserted, 
+trigger OpportunityTrigger on Opportunity(after insert,After delete,after update,after undelete,before insert,before update,before delete){
+/*Whenever a new Opportunity is inserted,updated,deleted,undelted.
 the parent Account should automatically update the Total_Opportunities__c field to 
 show the total number of Opportunities linked to that Account.*/
-    if(Trigger.isAfter && Trigger.isInsert){
-        //step1 collect all parent ids into set collection
-       set<id> accountIds = new set<id>();
-        for(Opportunity opportunity :trigger.new){
-            if(opportunity.accountid != null){
-                accountIds.add(opportunity.accountid);
+    if(Trigger.isAfter && 
+    (Trigger.isInsert|| Trigger.isUpdate || Trigger.isDelete || Trigger.isUndelete)){
+              set<id> accountIds = new set<id>();
+        if(Trigger.isInsert || Trigger.isUpdate || Trigger.isUndelete){
+            for(Opportunity opportunity :Trigger.new){
+                if(opportunity.accountid != null){
+                    accountids.add(opportunity.AccountId);
+                }
             }
+        } 
+            if(Trigger.isDelete || Trigger.isUpdate){
+                for(Opportunity opportunity :Trigger.old){
+                    if(opportunity.AccountId !=null){
+                        accountIds.add(opportunity.AccountId);
+                    }
+                }
+            }
+             Map<id,integer> totalOppsCount = new Map<id,Integer>();
+            for(AggregateResult ar :[select accountid,count(id) totalOpps from Opportunity
+                                     where accountid IN:accountIds Group by accountId]){
+                     
+                totalOppscount.put((id) ar.get('accountid'), (integer) ar.get('totalOpps'));
+                                         
+            }
+            list<Account> accountsToUpdate = new list<Account>();
+            for(Account account :[select id,name,Total_Opportunities__c from Account 
+                                   where id IN:accountIds]){
+                                       
+                if(totalOppsCount.containsKey(account.id)){
+                  account.Total_Opportunities__c  = totalOppscount.get(account.id);
+                }
+                else{
+                    account.Total_Opportunities__c =0;
+                }
+                accountsToupdate.add(account);
+            }
+            update accountsToUpdate;
         }
-        //step 2 fetch the accounts with their related opportunities
-        map<id,Account> mapAccounts = new map<id,Account>([select id,name,Total_Opportunities__c,
-                             (SELECT Id FROM Opportunities) from Account where id IN :accountids]);
-        //step 3 count 
-        for(Account account : mapAccounts.values()){
-           account.Total_opportunities__c = account.opportunities.size();
-        }
-       update mapAccounts.values();
-    } 
     
+
     /*Whenever Opportunities are inserted, check if any Opportunity Amount > 50,000
 If yes → Account.Has_Big_Opportunity__c = true
 
@@ -442,10 +349,8 @@ If no valid Opportunities exist, the Account total should be 0.*/
             if (opp.AccountId != null) {
                 accountIds.add(opp.AccountId);
             }
-        }
-    }
-
-    if (Trigger.isDelete) {
+       }
+ if (Trigger.isDelete) {
         for (Opportunity opp : Trigger.old) {
             if (opp.AccountId != null) {
                 accountIds.add(opp.AccountId);
@@ -492,9 +397,128 @@ If no valid Opportunities exist, the Account total should be 0.*/
          
        insert insertTasks;
     }
+    /*When Opportunities are inserted, updated, deleted, or undeleted
+Recalculate Account.Customer_Health__c based on multiple conditions:
+If any Closed Won Opportunity in last 90 days → Healthy
+Else if any Open Opportunity → At Risk
+Else → Inactive
+This field must always stay accurate even during bulk operations*/
+   } 
+    /*An Account can have only ONE Opportunity
+with StageName = 'Negotiation/Review' at any time.*/
+    if(Trigger.isBefore && Trigger.isInsert){
+        set<id> accountIds = new set<id>();
+        for(Opportunity opportunity :trigger.new){
+            if(opportunity.accountid !=null){
+                accountIds.add(opportunity.accountid);
+            }
+        }
+         Map<id,Integer> oppsCount = new Map<id,Integer>();
+        for(aggregateResult ar :[select accountid,count(id) cnt from Opportunity where accountid In: accountIds 
+                                 And StageName = 'Negotiation/Review' Group by accountid]){
+                     oppsCount.put((id) ar.get('accountid'), (Integer) ar.get('cnt'));
+                                     
+        }
+        for(Opportunity opportunity :trigger.new){
+            if(oppsCount.containsKey(opportunity.AccountId) && oppsCount.get(opportunity.AccountId) >=1 &&
+               opportunity.StageName =='Negotiation/Review'){
+                   
+                opportunity.addError('Only one Opportunity in Negotiation/Review is allowed per Account');
+            }
+        }
+    }
+    /*Business Requirement:
 
-//Opportunity stage should be prospecting and the close date should be 15 days from the day that is given
-  
+If an Account is marked as Frozen (Is_Frozen__c = true):
+
+❌ Users cannot create OR update Opportunities*/
+    if(Trigger.isBefore && (trigger.isInsert || trigger.isUpdate)){
+        set<id> accountIds = new set<id>();
+        for(Opportunity opportunity :Trigger.new){
+            if(opportunity.AccountId !=null){
+                accountIds.add(opportunity.AccountId);
+            }
+        }
+        Map<id,Account> accsMap = new Map<id,Account>([select id,name,Is_frozen__c from Account
+                                                        where id IN:accountIds]);
+        
+        
+        for(Opportunity opportunity :trigger.new){
+            if(accsMap.containskey(opportunity.AccountId) && accsMap.get(opportunity.AccountId).is_frozen__c == true){
+                opportunity.addError('This Account is frozen. You cannot create or update Opportunities.');
+            }
+        }
+    }  
+        /*Business Requirement:
+
+Account has a field Active_Revenue__c
+
+This field must always store:
+
+SUM of Amount of Opportunities where
+
+StageName = 'Closed Won'
+
+CloseDate is in the current financial year*/
+        
+     if(Trigger.isAfter && (Trigger.isInsert ||Trigger.isUpdate)){
+            set<id> accountIds = new set<id>();
+            for(Opportunity opportunity : trigger.new){
+                if(opportunity.AccountId !=null){
+                    accountIds.add(opportunity.AccountId);
+                }
+            }
+            Map<id,Decimal> closedWonTotalAmountOpps = new Map<id,Decimal>();
+            for(AggregateResult ar :[select accountid,Sum(amount) total from Opportunity where accountid IN:accountIds
+                                          And stagename = 'Closed Won' And CloseDate = THIS_YEAR Group by Accountid]){
+                                              
+          closedWonTotalAmountOpps.put((id) ar.get('accountid'), (Decimal) ar.get('total'));
+                                              
+        }
+         List<Account> accsList = new List<Account>([select id,name,Active_Revenue__c from Account
+                                                       where id IN:accountIds]);
+         
+         for(Account account :accsList){
+             if(closedWonTotalAmountOpps.containsKey(account.id)){
+                       account.active_revenue__c = closedWonTotalAmountOpps.get(Account.Id);
+             }
+             else{
+                 account.active_revenue__c = 0;
+             }
+         }
+         update accsList;
+    }   
+    /*An Opportunity CANNOT be created for an Account if the Account has any OPEN High-Priority Cases.
+
+Conditions:
+
+Case.Status ≠ Closed
+
+Case.Priority = High*/
+    if(Trigger.isbefore && Trigger.isInsert){
+        set<id> accountIds = new set<id>();
+        for(Opportunity opportunity :Trigger.new){
+            if(opportunity.accountid !=null){
+                accountIds.add(opportunity.AccountId);
+                
+            }
+        }
+         Map<id,Integer> highCases = new Map<id,Integer>();
+        for(AggregateResult ar :[select accountId,count(id) cnt from Case where accountId IN: accountIds
+                                 And Status != 'Closed' And Priority = 'High' Group By accountid]){
+                                     
+                  highCases.put((id) ar.get('accountid'), (integer) ar.get('cnt'));      
+                                     
+      }
+        for(Opportunity opportunity :Trigger.new){
+            if( opportunity.AccountId != null && highCases.containsKey(opportunity.AccountId)){
+                opportunity.addError('Cannot create Opportunity while High Priority open Cases exist for this Account.');
+            }
+        }
+    }
+    //Opportunity stage should be prospecting and the close date should be 15 days from the day that is given
+
+    
     if(Trigger.isBefore && Trigger.isInsert){
        // list<Opportunity> newOpps = Trigger.New;
         for(Opportunity newOpportunity : Trigger.new){
@@ -565,4 +589,5 @@ If Amount is less than 100,000 → set Opportunity_Type__c = 'Small Deal'*/
             }
         }
     }
+      
 }
