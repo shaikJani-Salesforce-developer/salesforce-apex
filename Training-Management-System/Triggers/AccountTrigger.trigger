@@ -1,5 +1,112 @@
 trigger AccountTrigger on Account (before insert,before update,before delete,after Insert,after update,After delete,after undelete) {
-/*Whenever a new Account is created, 
+/*When an Account is updated:
+Look at ALL related Opportunities
+Calculate the TOTAL Amount of Opportunities where:
+StageName = 'Closed Won'
+CloseDate is in the last 12 months
+
+If:
+Total Amount ≥ 10,00,000
+👉 Set
+Account.VIP_Customer__c = true
+
+Else:
+👉 Set
+Account.VIP_Customer__c = false*/
+    if(Trigger.isAfter && Trigger.isUpdate){
+        set<id> accountIds = new set<id>();
+        for(Account account :Trigger.new){
+           accountIds.add(account.id);
+        }
+        
+   Map<id,Decimal> totalOppsAmount = new Map<id,Decimal>();
+   for(AggregateResult ar :[select accountId,SUM(Amount) amt from Opportunity where accountid IN:accountIds
+                            And StageName = 'Closed Won' And CloseDate = Last_N_Months:12 Group By accountId]){
+             
+                   totalOppsAmount.put((id) ar.get('accountid'),(Decimal) ar.get('amt'));                               
+                                                                                                  
+        }
+   Map<id,Account> accsMap = new Map<id,Account>([select id,name,Vip_Customer__c from Account 
+                                                      where id IN:accountIds]); 
+        
+        for(Account account :accsMap.values()){
+            if(totalOppsAmount.containsKey(account.id) && totalOppsAmount.get(account.id)>=1000000){
+               account.VIP_Customer__c = true;
+            }
+            else{
+                account.VIP_Customer__c = false;
+            } 
+        }
+        update accsMap.values();
+    }
+     /*Account (After Update)
+
+Count how many related Opportunities have StageName = 'Closed Won'
+
+If count ≥ 3 → set Account.Premium_Customer__c = true
+
+Else false*/
+    if(Trigger.isAfter && Trigger.isUpdate){
+    Set<Id> accountIds = new Set<Id>();
+    for(Account acc : Trigger.new){
+        accountIds.add(acc.Id);
+    }
+
+    Map<Id, Account> accsMap = new Map<Id, Account>(
+        [SELECT Id, Premium_Customer__c,
+                (SELECT Id FROM Opportunities WHERE StageName = 'Closed Won')
+         FROM Account
+         WHERE Id IN :accountIds]
+    );
+
+    for(Account acc : accsMap.values()){
+        if(acc.Opportunities.size() >= 3){
+            acc.Premium_Customer__c = true;
+        } else {
+            acc.Premium_Customer__c = false;
+        }
+    }
+
+    update accsMap.values();
+}
+     /*Scenario:
+
+When an Account is updated:
+Check ALL related Opportunities
+If ANY Opportunity has:
+StageName = 'Closed Won'
+AND Amount >= 1,00,000
+
+👉 Set
+Account.High_Value_Customer__c = true
+
+Else
+Account.High_Value_Customer__c = false*/
+    if(Trigger.isAfter && Trigger.isUpdate){
+        set<id> accountIds = new set<id>();
+        for(Account account :trigger.new){
+            accountIds.add(account.id);     
+        }
+        set<id> stageAndAmountOpps = new set<id>();
+        for(Opportunity opportunity :[select id,name,stageName,Amount from Opportunity where accountid IN: accountids]){
+            if(opportunity.StageName == 'Closed Won' && opportunity.Amount >=100000 && opportunity.AccountId !=null){
+                stageAndAmountOpps.add(opportunity.AccountId);
+            }
+        }
+        Map<id,Account> accsMap = new Map<id,Account>([select id,name,High_Value_Customer__c from Account
+                                                       where id IN:accountIds]);
+                                                           
+                 for(Account account :accsMap.values()){
+                     if(stageAndAmountOpps.contains(account.id)){
+                         account.High_Value_Customer__c = true;
+                     } 
+                     else{
+                         account.High_Value_Customer__c = false;
+                     }                                                                                            
+                  }
+        update accsMap.values();
+   }
+     /*Whenever a new Account is created, 
 update all related Opportunities by setting StageName = 'Prospecting'.*/
     
     if(Trigger.isAfter && Trigger.isInsert){
@@ -126,7 +233,7 @@ Otherwise → false.*/
         map<id,Account> accsMap = new map<id,Account>([select id,name,Has_Manager_Contact__c from Account
                                                       where id IN:accountIds]);
         //set false value as default
-        for(Account account : accsMap.values()){
+        for(Account account : accsMap.values()){ 
             account.Has_Manager_Contact__c = false;
         }
         
@@ -275,124 +382,6 @@ Else false*/
             }
         }
         update accsMap.values();
-    }
-    /*Account (After Update)
-
-Count how many related Opportunities have StageName = 'Closed Won'
-
-If count ≥ 3 → set Account.Premium_Customer__c = true
-
-Else false*/
-    if(Trigger.isAfter && Trigger.isUpdate){
-        set<id> accountIds = new set<id>();
-        for(Account account : Trigger.new){
-            accountIds.add(account.id);
-        }
-        set<id> closedWonOpps = new set<id>();
-        for(Opportunity opportunity :[select id,Name,stageName from Opportunity Where accountid IN:accountIds]){
-            if(opportunity.stagename == 'Closed Won' && Opportunity.AccountId != null){
-                closedWonOpps.add(opportunity.AccountId);
-            }
-        }
-        Map<id,Account> accsMap = new Map<id,Account>([select id,name,Premium_Customer__c,(select id,StageName from Opportunities where stagename = 'Closed Won') 
-                                                       from Account where id IN:accountids]);
-        
-        for(Account account :accsMap.values()){
-            if(closedWonOpps.contains(account.id)){
-                Integer accCount = account.opportunities.size();
-                if(accCount >= 3){
-                    account.Premium_Customer__c = true;
-                }
-            }
-            else{
-                account.Premium_Customer__c = false;
-            }
-        }
-        update accsMap.values();
-    } 
-    /*Account (After Update)
-
-Count how many related Opportunities have StageName = 'Closed Won'
-
-If count ≥ 3 → set Account.Premium_Customer__c = true
-
-Else false*/
-    if(Trigger.isAfter && Trigger.isUpdate){
-    Set<Id> accountIds = new Set<Id>();
-    for(Account acc : Trigger.new){
-        accountIds.add(acc.Id);
-    }
-
-    Map<Id, Account> accsMap = new Map<Id, Account>(
-        [SELECT Id, Premium_Customer__c,
-                (SELECT Id FROM Opportunities WHERE StageName = 'Closed Won')
-         FROM Account
-         WHERE Id IN :accountIds]
-    );
-
-    for(Account acc : accsMap.values()){
-        if(acc.Opportunities.size() >= 3){
-            acc.Premium_Customer__c = true;
-        } else {
-            acc.Premium_Customer__c = false;
-        }
-    }
-
-    update accsMap.values();
-}
- /*When an Account is updated:
-Look at ALL related Opportunities
-Calculate the TOTAL Amount of Opportunities where:
-StageName = 'Closed Won'
-CloseDate is in the last 12 months
-
-If:
-Total Amount ≥ 10,00,000
-👉 Set
-Account.VIP_Customer__c = true
-
-Else:
-👉 Set
-Account.VIP_Customer__c = false*/
-    if(Trigger.isAfter && Trigger.isUpdate){
-        set<id> accountIds = new set<id>();
-        for(Account account :Trigger.new){
-           accountIds.add(account.id);
-        }
-        
-   Map<id,Decimal> totalOppsAmount = new Map<id,Decimal>();
-   for(AggregateResult ar :[select accountId,SUM(Amount) amt from Opportunity where accountid IN:accountIds
-                            And StageName = 'Closed Won' And CloseDate = Last_N_Months:12 Group By accountId]){
-             
-                   totalOppsAmount.put((id) ar.get('accountid'),(Decimal) ar.get('amt'));                               
-                                                                                                  
-        }
-   Map<id,Account> accsMap = new Map<id,Account>([select id,name,Vip_Customer__c from Account 
-                                                      where id IN:accountIds]); 
-        
-        for(Account account :accsMap.values()){
-            if(totalOppsAmount.containsKey(account.id) && totalOppsAmount.get(account.id)>=1000000){
-               account.VIP_Customer__c = true;
-            }
-            else{
-                account.VIP_Customer__c = false;
-            } 
-        }
-        update accsMap.values();
-    }
-//Update the account rating to hot if the industry is banking 
-
-    if(Trigger.isBefore && (Trigger.isInsert || Trigger.isUpdate)){
-     
-        //this is logic less trigger - best practice 
-        AccountTriggerHandler.beforeinsert(Trigger.new);
-    }
-    //Account industry,Fax,Phone is must
-    if(Trigger.isBefore && (Trigger.isInsert || Trigger.isUpdate)){
-       //list<Account> newAccounts = Trigger.New;
-        //this is logic less trigger - best practice
-        AccountTriggerHandler.validationError(Trigger.new);
-        
     }
     
          //Account record should not be deleted if the account active status = yes
