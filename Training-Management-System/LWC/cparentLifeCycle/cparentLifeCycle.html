@@ -1,0 +1,11 @@
+<template>
+    <lightning-card  title="Parent Life Cycle">
+     <div class="slds-p-around_medium">
+      <lightning-input type="Checkbox" label ="Call child" onchange={checkedUnchecked}></lightning-input>
+        
+        <template lwc:if= {isChecked}>
+          <c-child-life-cycle></c-child-life-cycle>
+        </template>
+     </div>
+        </lightning-card>
+</template>

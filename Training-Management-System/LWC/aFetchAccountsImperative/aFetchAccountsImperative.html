@@ -1,0 +1,19 @@
+<template>
+      <lightning-card  title="Fetch Opp Records By Using Imperative">
+     <div class="slds-p-around_medium">
+     <lightning-button variant="brand" label="Brand" title="Primary action" onclick={handleClick} class="slds-m-left_x-small"></lightning-button>
+
+       <template if:true={opportunityrecords} for:each={opportunityrecords} for:item="opportunity">
+          
+           <div class="slds-box slds-box_small" key={opportunity.Id}>
+                <p><b>Id of the Opp </b>{opportunity.Id}</p>
+                <p><b>Name of the Opp </b>{opportunity.Name}</p>
+                <p><b>Stage Name of the Opp </b>{opportunity.StageName}</p>
+                <p><b>Close Date of the Opp </b>{opportunity.CloseDate}</p>
+                <p><b>Amount of the Opp </b>{opportunity.Amount}</p>
+            </div>
+
+       </template>
+     </div>
+        </lightning-card>
+</template>

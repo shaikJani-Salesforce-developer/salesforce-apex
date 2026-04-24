@@ -1,0 +1,48 @@
+<template>
+    <lightning-card  title="Getter">
+     <div class="slds-p-around_medium">
+       <div>First Car is : {car}</div>
+        
+     </div>
+        </lightning-card>
+        <lightning-card  title="Conditional Rendering">
+       <div class="slds-p-around_medium">
+        <lightning-button variant="brand" label="Click" title="Primary action" onclick={handleClick} class="slds-m-left_x-small"></lightning-button>
+        <template lwc:if={isvisible}> 
+           <div>Conditional Rendering is Working</div>
+
+          </template>
+          <template lwc:else>
+            <div>Click here to Get Data</div>
+          </template>
+        
+       </div>
+        </lightning-card>
+
+         <lightning-card  title="Conditional Rendering with Checkbox">
+       <div class="slds-p-around_medium">
+          <lightning-input type="checkbox" label="Available Movies" name="input1" onchange={selectthebox}></lightning-input>
+           <template lwc:if={aremoviesavailable}>
+               <b>Available Movies</b>
+             <u>
+                <li>Pushpa 1</li>
+                <li>Pushpa 2</li>
+                <li>Malik Bhai</li>
+                <li>Thudarum</li>
+             </u>
+
+           </template>
+             <template lwc:else>
+               <div><b>No Movies Available</b></div>
+             </template>
+       </div>
+        </lightning-card>
+        <lightning-card  title="First LWC Component">
+        <div class="slds-p-around_medium">
+        <lightning-input type="text" label="Enter Condition" onchange={handleNameInputChange}></lightning-input>
+          <template lwc:if={namechange}>
+              <div>We are working with Conditional Rendering</div>
+          </template>
+     </div>
+        </lightning-card>
+</template>

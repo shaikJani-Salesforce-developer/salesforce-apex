@@ -1,0 +1,74 @@
+<template>
+    <lightning-card  title="Conditional Rendering">
+      <div class="slds-p-around_medium">
+       <lightning-input type="checkbox" label="Check Here" name="input1" onchange={checked}></lightning-input>
+         <template lwc:if={isChecked}>
+          <lightning-button variant="brand" label="Click" title="Primary action" onclick={handleClick} class="slds-m-left_x-small"></lightning-button>
+
+
+         </template>
+     </div>
+        </lightning-card>
+        <lightning-card  title="Conditional Rendering">
+         <div class="slds-p-around_medium">
+          <lightning-input type="text" label="Username" onchange={changeuser}></lightning-input>
+         <lightning-button variant="brand" label="Click Here" title="Primary action" onclick={onMesageClick} class="slds-m-left_x-small"></lightning-button>
+            <template lwc:if={showMessage}>
+              <p>Hello, {username}</p>
+            </template>
+        </div>
+        </lightning-card>
+        <lightning-card  title="Temperature Check">
+        <div class="slds-p-around_medium">
+       <lightning-input type="number" label="Enter Temperature in Celcius" onchange={changeTemperature}></lightning-input>
+        <template lwc:if={cold}>
+           <p><b>Cold Outside, Wear a Jacket</b></p> 
+        </template>
+        <template lwc:elseif={warm}>
+           <p><b>Warm Outside, Drink Water</b></p>
+        </template>
+        <template lwc:elseif={Hot}>
+           <p><b>Outside Hot, dont go anywhere</b></p> 
+        </template>
+      </div>
+        </lightning-card>
+
+        <lightning-card  title="Weather Check">
+     <div class="slds-p-around_medium">
+         <lightning-combobox
+            name="weather"
+            label="Select Weather Type"
+            value={weathervalue}
+            placeholder="Select"
+            options={weatheroptions}
+            onchange={handleChange} ></lightning-combobox>
+            <template lwc:if={isSunny}>
+              <p>it is Sunny</p>
+
+            </template>
+            <template lwc:elseif={isRainy}>
+              <p>it is Raining</p>
+
+            </template>
+            <template lwc:elseif={isCloudy}>
+              <p>it is Cloudy</p>
+
+            </template>
+    
+     </div>
+        </lightning-card>
+
+         <lightning-card  title="Password Check">
+          <div class="slds-p-around_medium">
+           <lightning-input type="password" label="Enter Password" onchange={passwordChange}></lightning-input>
+           <lightning-input type="password" label="Re Enter Password" onchange={rePasswordChange}></lightning-input>
+           <lightning-button variant="brand" label="Check Password Match" title="Primary action" onclick={handleClick} class="slds-m-left_x-small"></lightning-button>
+             
+             <template lwc:if={message}>
+             <p class={messageClass}>{message}</p>
+             </template>
+         </div>
+        </lightning-card>
+
+
+</template>
