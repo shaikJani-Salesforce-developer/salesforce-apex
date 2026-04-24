@@ -1,0 +1,22 @@
+<template>
+    <lightning-card  title="Sample Registration Form">
+     <div class="slds-p-around_small">
+        <!--inputs(Data),Address,DOB,Button-->
+        <lightning-input type="text" label="First Name"></lightning-input>
+        <lightning-input type="text" label="Last Name"></lightning-input>
+        <lightning-input type="date" name="input1" label="DOB" ></lightning-input>
+        <lightning-input type="number" label="Phone Number"></lightning-input>
+        <lightning-input-address
+             address-label="Address"
+             street-label="Street"
+             city-label="City"
+             country-label="Country"
+             province-label="Province"
+             postal-code-label="PostalCode"
+             required
+             field-level-help="Help Text for inputAddress field" ></lightning-input-address>
+             <lightning-button variant="brand" label="Save" title="Primary action" onclick={handleClick} class="slds-m-left_x-small"></lightning-button>
+
+     </div>
+        </lightning-card>
+</template>

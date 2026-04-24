@@ -1,0 +1,13 @@
+<template>
+    <lightning-card  title="Two Way Data Binding">
+     <div class="slds-p-around_medium">
+       <lightning-input type="text" label="First Name" onchange={handleInputNameChange} value = {firstname}></lightning-input>
+       <lightning-input type="number" label="Age" onchange={handleInputAgeChange} value = {age}></lightning-input>
+        <br/>
+       <lightning-button variant="brand" label="Click" title="Primary action" onclick={handleClick} class="slds-m-left_x-small"></lightning-button>  &nbsp;
+       <lightning-button variant="brand" label="Show Details" title="Primary action" onclick={handleClickNameAge} class="slds-m-left_x-small"></lightning-button> <br/>
+
+        My Name is : {firstname} and my Age is : {age}
+    </div>
+        </lightning-card>
+</template>

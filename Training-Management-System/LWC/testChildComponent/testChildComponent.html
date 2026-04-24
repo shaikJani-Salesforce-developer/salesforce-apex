@@ -1,0 +1,11 @@
+<template>
+    <lightning-card  title="Child Component">
+     <div class="slds-p-around_medium">
+       my name is : {myname}, my age is :{myage}
+       <lightning-input type="text" label="First Name" onchange={handlefnChange}></lightning-input>
+       <lightning-input type="text" label="Last Name" onchange ={handlelnChange}></lightning-input>
+       <lightning-button variant="brand" label="Save" title="Primary action" onclick={handleClick} class="slds-m-left_x-small"></lightning-button>
+
+     </div>
+        </lightning-card>
+</template>

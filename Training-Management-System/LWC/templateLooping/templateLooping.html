@@ -1,0 +1,23 @@
+<template>
+        <lightning-card  title="Template Looping">
+     <div class="slds-p-around_medium">
+         <template if:true={heros} for:each={heros} for:item="hero">
+
+        <ul key = {hero} class="slds-has-dividers_around">
+            <li class="slds-item">{hero}</li>
+        </ul>
+            
+         </template>
+     </div>
+        </lightning-card>
+        <lightning-card  title="Template Looping with Array of SObjects">
+        <div class="slds-p-around_medium">
+         <template if:true={students} for:each={students} for:item="student">
+            <ul key = {student.id} class="slds-has-dividers_around">
+            <li class="slds-item"><b>{student.name},{student.college}</b></li>
+        </ul>
+            
+         </template>
+       </div>
+        </lightning-card>
+</template>

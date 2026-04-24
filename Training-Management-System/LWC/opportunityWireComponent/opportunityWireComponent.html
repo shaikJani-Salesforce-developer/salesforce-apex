@@ -1,0 +1,19 @@
+<template>
+    <lightning-card  title="Fetch Opp Records By Using Wire ">
+     <div class="slds-p-around_medium">
+       
+       <template if:true={oppsRecords.data} for:each={oppsRecords.data} for:item="opp">
+          
+           <div class="slds-box slds-box_small" key={opp.Id}>
+                <p><b>Id of the Opp </b>{opp.Id}</p>
+                <p><b>Name of the Opp </b>{opp.Name}</p>
+                <p><b>Stage Name of the Opp </b>{opp.StageName}</p>
+                <p><b>Close Date of the Opp </b>{opp.CloseDate}</p>
+                <p><b>Amount of the Opp </b>{opp.Amount}</p>
+            </div>
+
+
+       </template>
+     </div>
+        </lightning-card>
+</template>

@@ -1,0 +1,14 @@
+<template>
+    <lightning-card  title="Query Selector">
+     <div class="slds-p-around_medium">
+      <lightning-button variant="brand" label="Save" title="Primary action" onclick={handleClick} class="slds-m-left_x-small"></lightning-button>
+       <div>Working Query Selector</div>
+      <template if:true={traineeslist} for:each={traineeslist} for:item="trainee" for:index="index">
+         <li class="train" key={trainee}>
+              {trainee}
+         </li>
+      </template>
+    </div>
+        </lightning-card>
+     
+</template>

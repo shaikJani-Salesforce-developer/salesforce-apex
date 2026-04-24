@@ -1,0 +1,24 @@
+<template>
+          <lightning-card  title="Fetch Opp Records By Using Wire Stage Name ">
+     <div class="slds-p-around_medium">
+        <lightning-combobox
+            name="type"
+            label="Select Opportunity Stage Name"
+            value={stagename}
+            placeholder="Select Progress"
+            options={selectstage}
+            onchange={handleChange} ></lightning-combobox>
+
+    <p>Selected value is: {value}</p>
+       
+       <template if:true={opportunities.data} for:each={opportunities.data} for:item="opp">
+                  <div class="slds-box slds-box_x-small" key={opp.Id}>
+                     <p><b>Id of the Opportunity:</b>{opp.Id}</p>
+                       <p><b>Name of the Opportunity:</b>{opp.Name}</p>
+                         <p><b>Stage Name of the Opportunity:</b>{opp.StageName}</p>
+                         <p><b>Amount of the Opportunity:</b>{opp.Amount}</p>
+                  </div>
+       </template>
+     </div>
+        </lightning-card>
+</template>

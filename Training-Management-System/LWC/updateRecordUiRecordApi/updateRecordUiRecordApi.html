@@ -1,0 +1,25 @@
+<template>
+    <lightning-card  title="First LWC Component">
+     <div class="slds-p-around_medium">
+      <lightning-input label ="Name " value={name} onchange ={handleChange} data-field ='Name'></lightning-input>
+      <lightning-input label ="Fax " value={fax} onchange ={handleChange} data-field ='Fax'></lightning-input>
+      <lightning-input label ="Annual Revenue " value={annualrevenue} onchange ={handleChange} data-field ='AnnualRevenue'></lightning-input>
+      <lightning-input label ="Phone " value={phone} onchange ={handleChange} data-field ='Phone'></lightning-input>
+      <lightning-combobox
+            name="industry"
+            label="Select Industry"
+            value={industry}
+            placeholder="Select Industry"
+            options={industyOptions}
+            onchange={handleChange} ></lightning-combobox>
+            <lightning-combobox
+            name="rating"
+            label="Select Rating"
+            value={rating}
+            placeholder="Select Rating"
+            options={ratingOptions}
+            onchange={handleChange} ></lightning-combobox> <br/>
+            <lightning-button label ="Update Account" variant ="brand" onclick ={updateAccount}></lightning-button>
+     </div>
+        </lightning-card>
+</template>
