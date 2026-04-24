@@ -1,0 +1,66 @@
+<template>
+    <lightning-card title="Display Child Modal">
+        
+        <div class="slds-p-around_medium">
+            <b>
+                Parent component → need help button  
+                Upon click on the button → it should display modal → popup message
+            </b>
+        </div>
+
+        <!-- ✅ CONDITIONAL RENDERING -->
+        <template lwc:if={isModalVisible}>
+
+            <section role="dialog" tabindex="-1" aria-modal="true"
+                aria-labelledby="modal-heading-01"
+                class="slds-modal slds-fade-in-open">
+
+                <div class="slds-modal__container">
+
+                    <!-- HEADER -->
+                    <header class="slds-modal__header">
+
+                        <button class="slds-button slds-button_icon slds-modal__close 
+                                       slds-button_icon-inverse"
+                                title="Close"
+                                onclick={hideModal}>
+                            <span class="slds-assistive-text">Close</span>
+                        </button>
+
+                        <h2 id="modal-heading-01" 
+                            class="slds-text-heading_medium slds-hyphenate">
+                            Modal Header
+                        </h2>
+                    </header>
+
+                    <!-- BODY -->
+                    <div class="slds-modal__content slds-p-around_medium">
+
+                        <p>
+                            Where humans and agents drive customer success together.
+                            Salesforce brings together Slack, Agentforce, Customer 360, and Data 360 
+                            on one trusted platform, so teams move faster and act with confidence — 
+                            with humans and agents working inside the systems that run your business.
+                        </p>
+
+                    </div>
+
+                    <!-- FOOTER -->
+                    <footer class="slds-modal__footer">
+                        <lightning-button 
+                            variant="brand" 
+                            label="Close" 
+                            onclick={hideModal}>
+                        </lightning-button>
+                    </footer>
+
+                </div>
+            </section>
+
+            <!-- BACKDROP -->
+            <div class="slds-backdrop slds-backdrop_open"></div>
+
+        </template>
+
+    </lightning-card>
+</template>

@@ -1,0 +1,14 @@
+<template>
+    <lightning-card  title="Filtered records">
+     <div class="slds-p-around_medium">
+     <template lwc:if={records}></template>
+      <ul>
+        <template for:each={records} for:item="record">
+           <li key={record.id}>
+                {record.id} - {record.name}-{record.status}
+           </li>
+        </template>
+      </ul>
+     </div>
+        </lightning-card>
+</template>

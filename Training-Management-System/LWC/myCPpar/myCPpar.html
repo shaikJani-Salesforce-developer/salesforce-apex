@@ -1,0 +1,12 @@
+<template>
+    <lightning-card  title="Filter The Records">
+     <div class="slds-p-around_medium">
+      <lightning-combobox
+            name="Status"
+            label="Status"
+            options={statusOptions}
+            onchange={handleStatusChange} ></lightning-combobox>
+     </div>
+     <c-my-cpar></c-my-cpar>
+        </lightning-card>
+</template>

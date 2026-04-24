@@ -1,0 +1,16 @@
+<template>
+     <lightning-card  title="Select Country">
+     <div class="slds-p-around_medium">
+          <lightning-combobox
+            name="Country"
+            label="Select Your Country"
+            value={selectCountry}
+            placeholder="Select Your Country"
+            options={countryoptions}
+            onchange={handleCountryChange} ></lightning-combobox>
+
+            <c-my-child-country-component selected-country = {selectCountry} ></c-my-child-country-component>
+    
+     </div>
+        </lightning-card>
+</template>

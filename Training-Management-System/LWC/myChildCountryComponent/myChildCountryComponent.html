@@ -1,0 +1,22 @@
+<template>
+    <lightning-card  title="Select Your Country">
+     <div class="slds-p-around_medium">
+        <template if:true={selectedCountry}>
+
+            <div class="slds-text-body_regular">Cities in {selectedCountry}</div>
+            <ul class="slds-list_dotted slds-m-left_medium">
+              <template for:each={cities} for:item="city">
+                 <li key={city}>
+                      {city}
+                 </li>
+              </template>
+           </ul>
+        </template>
+        <template if:false={selectedCountry}>
+            <p>Please select the country to view the cities</p>
+
+        </template>
+
+     </div>
+        </lightning-card>
+</template>

@@ -1,0 +1,23 @@
+<template>
+    <lightning-card  title="First LWC Component">
+     <div class="slds-p-around_medium">
+        <template if:true={wrapperlist} for:each={wrapperlist} for:item="wrapper">
+            <div key ={wrapper.account.id} class="slds-box slds-m-bottom_small">
+                  <div class="slds-text-title">Account name : {wrapper.account.name}</div>
+                    <p><strong>industry :</strong> {wrapper.account.industry}</p>
+                    <p><strong>Contacts</strong></p>
+                        <ul class="slds-list_dotted slds-m-left_medium">
+                        <template if:true={wrapper.contacts} for:each={wrapper.contacts} for:item="contact">
+                           <li key={contact.id}>
+                                {contact.name}
+                           </li>
+                        </template>
+                         </ul>
+
+               </div>
+           
+       
+        </template>
+     </div>
+        </lightning-card>
+</template>

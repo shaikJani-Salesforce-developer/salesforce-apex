@@ -1,0 +1,27 @@
+<template>
+    <lightning-card  title="Child Component = Contacts">
+     <div class="slds-p-around_medium">
+       <template if:true={contacts} for:each={contacts} for:item="contact">
+          <li key={contact.id}>
+               <div>name : <b>{contact.name}</b> <b>email :{contact.email}</b></div>
+          </li>
+       </template>
+     </div>
+        </lightning-card>
+
+        <lightning-card  title="Child Component = Courses">
+     <div class="slds-p-around_medium">
+        <template if:true={courses} for:each={courses} for:item="course">
+          <div key={course.courseid}> <b>Name of the Course : </b>{course.nameofthecourse}</div>
+                
+                    <template if:true={course.students} for:each={course.students} for:item="student">
+                       <li key={student.id}>
+                        <div><b>Name of the Student : </b> {student.nameofthestudent}</div>
+                       </li>
+                    </template>
+                
+           
+        </template>
+     </div>
+        </lightning-card>
+</template>

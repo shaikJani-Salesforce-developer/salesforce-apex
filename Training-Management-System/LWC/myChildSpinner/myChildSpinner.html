@@ -1,0 +1,20 @@
+<template>
+     <lightning-card  title="Child Spinner">
+        <div>
+            <b>
+                you dont want users to guess what is happening at background 
+              → display the spinner at frontend → once data is ready → spinner goes
+
+            </b>
+        </div>
+     <div class="slds-p-around_medium">
+
+        <template lwc:if= {isPlaying}>
+       
+        <lightning-spinner alternative-text="Loading" size="medium"></lightning-spinner>
+        </template>
+       
+    
+     </div>
+        </lightning-card>
+</template>
