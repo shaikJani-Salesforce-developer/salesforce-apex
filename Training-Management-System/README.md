@@ -26,6 +26,7 @@ This project is designed to showcase core Apex development skills, Salesforce be
  - Navigation
  - Template Looping
  - HTML, JavaScript, CSS
+ - Life Cycle Hooks
 
 ### Business Scenarios Implemented
 - Account, Contact, Lead, Case, and Opportunity automation
