@@ -18,6 +18,15 @@ This project is designed to showcase core Apex development skills, Salesforce be
 - Batch Apex (large data processing with error handling)
 - Scheduled Apex (time-based automation)
 
+### Lightning Web Ccomponents
+ - Conditional Rendering
+ - LDS(@wire, @track,@api)
+ - LightningUI Record API Module
+ - Apex Communication With @AuraEnabled
+ - Navigation
+ - Template Looping
+ - HTML, JavaScript, CSS
+
 ### Business Scenarios Implemented
 - Account, Contact, Lead, Case, and Opportunity automation
 - Revenue-based and status-based updates
