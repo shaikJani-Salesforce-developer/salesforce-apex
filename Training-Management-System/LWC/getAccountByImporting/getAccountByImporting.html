@@ -1,0 +1,20 @@
+<template>
+    <lightning-card title="Account Details">
+        <div class="slds-p-around_medium">
+            <b>Console it to check Record Details</b>
+        </div>
+    </lightning-card>
+
+    <lightning-card title="Account Details By Using Function">
+        <div class="slds-p-around_medium">
+            <template lwc:if={accountDetailsf}>
+                <div><b>Account Name :</b> {accountDetailsf.Name.value}</div>
+                <div><b>Account Phone :</b> {accountDetailsf.Phone.value}</div>
+                <div><b>Account Industry :</b> {accountDetailsf.Industry.value}</div>
+                <div><b>Account Fax :</b> {accountDetailsf.Fax.value}</div>
+                <div><b>Account Annual Revenue :</b> {accountDetailsf.AnnualRevenue.value}</div>
+                <div><b>Account Rating :</b> {accountDetailsf.Rating.value}</div>
+            </template>
+        </div>
+    </lightning-card>
+</template>

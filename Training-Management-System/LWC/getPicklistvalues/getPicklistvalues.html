@@ -1,0 +1,15 @@
+<template>
+     <lightning-card  title="Account Object Info">
+     <div class="slds-p-around_medium">
+       <div><b>Console to see Account Industry values</b></div>
+         <lightning-combobox
+            name="Industry"
+            label="Select Industry"
+            value={pickedIndustryValues}
+            placeholder="Select Industry"
+            options={industryValueOptions}
+            onchange={handleIndustryChange} ></lightning-combobox>
+            <p>Industry Selected : {pickedIndustryValues}</p>
+     </div>
+        </lightning-card>
+</template>

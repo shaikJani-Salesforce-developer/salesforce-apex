@@ -1,0 +1,34 @@
+<template>
+         <lightning-card  title="Account Object Picklist Values">
+     <div class="slds-p-around_medium">
+       <div>Console it</div>
+    
+     </div>
+        </lightning-card>
+
+        <lightning-card  title="Account Object Industry Values">
+        <div class="slds-p-around_medium">
+            <lightning-combobox
+            name="Industry"
+            label="Select Industry"
+            value={pickedIndustryValues}
+            placeholder="Select Industry"
+            options={industryValueOptions}
+            onchange={handleChange} ></lightning-combobox>
+             <p>Industry Selected : {pickedIndustryValues}</p>
+        </div>
+        </lightning-card>
+
+         <lightning-card  title="Account Object Picklist Values">
+          <div class="slds-p-around_medium">
+            <lightning-combobox
+            name="Rating"
+            label="Select Rating"
+            value={pickedRatingValues}
+            placeholder="Select Rating"
+            options={ratingValueOptions}
+            onchange={handleChange} ></lightning-combobox>
+    
+         </div>
+        </lightning-card>
+</template>

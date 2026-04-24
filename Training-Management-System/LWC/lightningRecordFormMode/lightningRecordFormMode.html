@@ -1,0 +1,42 @@
+<template>
+     <lightning-card  title="Lightning Record Form (View Mode)">
+     <div class="slds-p-around_medium">
+      <lightning-record-form
+         record-id= "001dL00001yfCoZQAU"
+         object-api-name={objectname}
+         fields={accountfields}
+         columns="2"
+         mode="view"
+         onsubmit={handleSubmit}
+>
+</lightning-record-form>
+     </div>
+        </lightning-card>
+
+        <lightning-card title="Lightning Record Form (Edit Mode)">
+         <div class="slds-p-around_medium">
+           <lightning-record-form
+         record-id= "001dL00001yfCoZQAU"
+         object-api-name={objectname}
+         fields={accountfields}
+         columns="2"
+         mode="edit"
+         onsubmit={handleSubmit}
+></lightning-record-form>
+     </div>
+        </lightning-card>
+
+
+        <lightning-card title="Lightning Record Form (Read Only Mode)">
+         <div class="slds-p-around_medium">
+           <lightning-record-form
+         record-id= "001dL00001yfCoZQAU"
+         object-api-name={objectname}
+         fields={accountfields}
+         columns="2"
+         mode="readonly"
+         onsubmit={handleSubmit}
+        ></lightning-record-form>
+       </div>
+        </lightning-card>
+</template>

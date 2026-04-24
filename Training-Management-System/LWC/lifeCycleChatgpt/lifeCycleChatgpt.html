@@ -1,0 +1,11 @@
+<template>
+     <lightning-card  title="Life Cycle Hooks">
+     <div class="slds-p-around_medium">
+       <template if:true={records} for:each={records} for:item="record">
+          <li key={record.Id}>
+               {record.name}
+          </li>
+       </template>
+     </div>
+        </lightning-card>
+</template>
